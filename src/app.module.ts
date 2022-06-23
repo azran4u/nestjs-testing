@@ -4,7 +4,6 @@ import { WinstonModule } from 'nest-winston';
 import { AppConfigModule, AppConfigService } from './config';
 import { loggerOptionsFactory } from './logger/logger';
 import { UserModule } from './user/user.module';
-import { AfidMiddleware } from './utils/express.afid.middleware';
 import { UserMiddleware } from './utils/express.user.middleware';
 
 @Module({
@@ -21,6 +20,6 @@ import { UserMiddleware } from './utils/express.user.middleware';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(json(), AfidMiddleware, UserMiddleware).forRoutes('*');
+    consumer.apply(json(), UserMiddleware).forRoutes('*');
   }
 }

@@ -3,7 +3,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { NextFunction, Request, Response } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
-import { afidFactory } from './afid';
+import { afidFactory } from './afid.factory';
 
 @Injectable()
 export class AfidMiddleware implements NestMiddleware {

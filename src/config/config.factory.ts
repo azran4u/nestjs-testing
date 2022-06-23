@@ -10,7 +10,10 @@ export const configFactory: ConfigFactory<{ config: Configuration }> = () => {
       logger: {
         level: envToStringOrDefault('LOGGER_LEVEL', 'debug'),
       },
-    },
+      afid: {
+        enabled: true,
+      },
+    } as Configuration,
   };
 };
 
@@ -21,9 +24,14 @@ export interface LoggerConfig {
   level: string;
 }
 
+export interface AfidConfig {
+  enabled: boolean;
+}
+
 export interface Configuration {
   server: ServerConfig;
   logger: LoggerConfig;
+  afid: AfidConfig;
 }
 
 function envToNumberOrDefault(env: string, defaultValue: number): number {
