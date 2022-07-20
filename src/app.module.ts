@@ -1,10 +1,9 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { json } from 'express';
+import { Module } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import { AppConfigModule, AppConfigService } from './config';
+import { Demo1Module } from './demo1/demo1.module';
+import { Demo2Module } from './demo2/demo2.module';
 import { loggerOptionsFactory } from './logger/logger';
-import { UserModule } from './user/user.module';
-import { UserMiddleware } from './utils/express.user.middleware';
 
 @Module({
   imports: [
@@ -15,11 +14,12 @@ import { UserMiddleware } from './utils/express.user.middleware';
       },
       inject: [AppConfigService],
     }),
-    UserModule,
+    Demo1Module,
+    Demo2Module,
   ],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(json(), UserMiddleware).forRoutes('*');
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  // consumer.apply(json(), UserMiddleware).forRoutes('*');
+  // }
 }

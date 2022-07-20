@@ -3,4 +3,6 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   collectCoverage: true,
+  verbose: true,
+  testMatch: ['**/?(*.)+(spec|test).ts'],
 };
