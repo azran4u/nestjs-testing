@@ -4,6 +4,7 @@ import { AppConfigModule, AppConfigService } from './config';
 import { Demo1Module } from './demo1/demo1.module';
 import { Demo2Module } from './demo2/demo2.module';
 import { loggerOptionsFactory } from './logger/logger';
+import { Demo3Module } from './demo3/demo3.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { loggerOptionsFactory } from './logger/logger';
     }),
     Demo1Module,
     Demo2Module,
+    Demo3Module,
   ],
 })
 export class AppModule {
