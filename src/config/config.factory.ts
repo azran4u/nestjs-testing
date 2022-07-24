@@ -1,5 +1,6 @@
 import { ConfigFactory } from '@nestjs/config';
-import { parseInt } from 'lodash';
+import { envToNumberOrDefault } from '../utils/envToNumberOrDefault';
+import { envToStringOrDefault } from '../utils/envToStringOrDefault';
 
 export const configFactory: ConfigFactory<{ config: Configuration }> = () => {
   return {
@@ -10,8 +11,11 @@ export const configFactory: ConfigFactory<{ config: Configuration }> = () => {
       logger: {
         level: envToStringOrDefault('LOGGER_LEVEL', 'debug'),
       },
-      afid: {
-        enabled: true,
+      catFacts: {
+        url: envToStringOrDefault(
+          'CAT_FACTS_URL',
+          'https://catfact.ninja/fact'
+        ),
       },
     } as Configuration,
   };
@@ -24,25 +28,12 @@ export interface LoggerConfig {
   level: string;
 }
 
-export interface AfidConfig {
-  enabled: boolean;
+export interface CatFactsConfig {
+  url: string;
 }
 
 export interface Configuration {
   server: ServerConfig;
   logger: LoggerConfig;
-  afid: AfidConfig;
-}
-
-function envToNumberOrDefault(env: string, defaultValue: number): number {
-  const value = process.env[env];
-  if (!value) return defaultValue;
-  const valueNumber = parseInt(value);
-  return valueNumber;
-}
-
-function envToStringOrDefault(env: string, defaultValue: string): string {
-  const value = process.env[env];
-  if (!value) return defaultValue;
-  return value;
+  catFacts: CatFactsConfig;
 }
