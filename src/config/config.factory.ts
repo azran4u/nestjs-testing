@@ -17,6 +17,9 @@ export const configFactory: ConfigFactory<{ config: Configuration }> = () => {
           'https://catfact.ninja/fact'
         ),
       },
+      afid: {
+        enabled: false,
+      },
     } as Configuration,
   };
 };
@@ -32,8 +35,13 @@ export interface CatFactsConfig {
   url: string;
 }
 
+export interface AfidConfig {
+  enabled: boolean;
+}
+
 export interface Configuration {
   server: ServerConfig;
   logger: LoggerConfig;
   catFacts: CatFactsConfig;
+  afid: AfidConfig;
 }

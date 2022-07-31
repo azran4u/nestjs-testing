@@ -1,8 +1,7 @@
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import axios from 'axios';
+import { Test } from '@nestjs/testing';
 import { agent as request } from 'supertest';
-import { UserController } from './user.controller';
+import { Demo3Module } from './demo3.module';
 import { UserService } from './user.service';
 
 const demo = 'demo3';
@@ -11,29 +10,35 @@ const uri = `/${demo}`;
 jest.mock('axios');
 
 describe(`${demo} UserController`, () => {
-  let controller: UserController;
   let app: INestApplication;
+  const fact = 'cat fact';
+  let userService = { getCatFacts: jest.fn().mockResolvedValue(fact) };
 
-  beforeEach(async () => {
-    const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
-      providers: [UserService],
-    }).compile();
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [Demo3Module],
+    })
+      .overrideProvider(UserService)
+      .useValue(userService)
+      .compile();
 
     app = moduleRef.createNestApplication();
     await app.init();
-    controller = moduleRef.get<UserController>(UserController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
-  it('should get cats facts', async () => {
-    const fact = 'cat fact';
-    // @ts-ignore
-    axios.get.mockResolvedValue({ data: { fact }, status: 200 });
-    const res = await request(app.getHttpServer()).get(uri);
+  it(`/GET ${demo}/json`, async () => {
+    const res = await request(app.getHttpServer()).get(`${uri}/json`);
     expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual({ fact });
+  });
+
+  it(`/GET ${demo}/text`, async () => {
+    const res = await request(app.getHttpServer()).get(`${uri}/text`);
+    expect(res.statusCode).toEqual(200);
+    expect(res.text).toEqual(fact);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });

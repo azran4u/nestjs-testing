@@ -23,7 +23,7 @@ export class UserService {
     return this.parseCatFacts(axiosResponse);
   }
 
-  parseCatFacts(axiosResponse: AxiosResponseCatFacts) {
+  private parseCatFacts(axiosResponse: AxiosResponseCatFacts) {
     const fact = axiosResponse?.data?.fact;
     if (isNil(fact)) logAndThrow(undefined, this.logger, 'cannot parse facts');
     return fact;
