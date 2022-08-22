@@ -2,7 +2,7 @@ import { isNaN, isNil } from 'lodash';
 
 export function envToNumberOrDefault(
   env: string,
-  defaultValue: number
+  defaultValue?: number
 ): number {
   defaultValue =
     isNil(defaultValue) || isNaN(defaultValue) ? undefined : defaultValue;

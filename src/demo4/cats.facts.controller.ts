@@ -1,18 +1,34 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { ExternalApiError } from '../model/ExternalApiError';
 import { CatsFactsService } from './cats.facts.service';
 
 @Controller('demo4')
 export class UserController {
   constructor(private catsFactsService: CatsFactsService) {}
 
-  @Get('json')
-  async getJson() {
-    const fact = await this.catsFactsService.getCatFacts();
-    return { fact };
+  @Get()
+  async getCatFact(): Promise<{ fact: string }> {
+    const catFactOrError = await this.catsFactsService.get();
+    if (catFactOrError.isFailure()) {
+      this.errorsHandler(catFactOrError.value);
+    } else {
+      return { fact: catFactOrError.value };
+    }
   }
 
-  @Get('text')
-  async getText() {
-    return this.catsFactsService.getCatFacts();
+  private errorsHandler(error: any) {
+    switch (error.constructor) {
+      case ExternalApiError:
+        throw new HttpException(error.message, 501);
+      // case CatsFactsExtractError:
+      //   throw new InternalServerErrorException(error.message);
+      default:
+        throw new InternalServerErrorException(error.message);
+    }
   }
 }

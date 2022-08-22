@@ -41,7 +41,7 @@ describe(`${demo} UserService`, () => {
   });
 
   it('should get cats facts', async () => {
-    // @ts-ignore
+    // @ts-ignore    
     axios.get.mockResolvedValue({ data: { fact } });
     const res = await service.getCatFacts();
     expect(res).toEqual(fact);

@@ -28,6 +28,16 @@
       "internalConsoleOptions": "neverOpen"
     },
     {
+      "name": "Debug Jest Tests using npm script",
+      "type": "node",
+      "preLaunchTask": "build",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "debug"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
       "name": "mocha",
       "type": "node",
       "request": "launch",

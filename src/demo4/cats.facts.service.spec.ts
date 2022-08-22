@@ -1,29 +1,34 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import axios from 'axios';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { AppConfigModule } from '../config';
 import { CatsFactsService } from './cats.facts.service';
+import nock from 'nock';
 
 const moduleMocker = new ModuleMocker(global);
 
 const demo = 'demo4';
 
-jest.mock('axios');
-
-describe(`${demo} UserService`, () => {
+describe(`${demo} UserService using nock`, () => {
   let service: CatsFactsService;
   const fact = 'cat fact';
+  const successRes = { value: fact };
+  const testUrl = 'http://tests.com';
 
-  beforeEach(async () => {
+  beforeAll(async () => {
+    process.env['CAT_FACTS_URL'] = testUrl;
     const module: TestingModule = await Test.createTestingModule({
       providers: [CatsFactsService],
       imports: [AppConfigModule],
     })
       .useMocker((token) => {
         if (token === WINSTON_MODULE_PROVIDER) {
-          return { error: jest.fn() };
+          return {
+            error: jest.fn(),
+            child: jest.fn().mockReturnValue({ error: jest.fn() }),
+          };
         }
+
         if (typeof token === 'function') {
           const mockMetadata = moduleMocker.getMetadata(
             token
@@ -36,58 +41,52 @@ describe(`${demo} UserService`, () => {
     service = module.get<CatsFactsService>(CatsFactsService);
   });
 
+  beforeEach(() => {
+    nock.cleanAll();
+  });
+
+  afterAll(() => {
+    nock.cleanAll();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('should get cats facts', async () => {
-    // @ts-ignore
-    axios.get.mockResolvedValue({ data: { fact } });
-    const res = await service.getCatFacts();
-    expect(res).toEqual(fact);
+  it('should get cats fact', async () => {
+    const scope = nock(testUrl).persist().get('/').reply(200, fact);
+    const res = await service.get();
+    expect(res).toEqual(successRes);
   });
 
   it('should return error when api responds without a fact', async () => {
-    // @ts-ignore
-    axios.get.mockResolvedValue({ data: {} });
-    try {
-      const res = await service.getCatFacts();
-    } catch (error) {
-      expect(error).toBeDefined();
-    }
+    const scope = nock(testUrl)
+      .persist()
+      .get('/')
+      .replyWithError('network error');
+    const res = await service.get();
+    expect(res.isFailure()).toBeTruthy();
+  });
+
+  it('should return empty string when data received is undefined', async () => {
+    const scope = nock(testUrl).persist().get('/').reply(200, undefined);
+    const res = await service.get();
+    expect(res.value).toEqual('');
   });
 
   it('should return error when api responds without data field', async () => {
-    // @ts-ignore
-    axios.get.mockResolvedValue({ status: 200 });
-    try {
-      const res = await service.getCatFacts();
-    } catch (error) {
-      expect(error).toBeDefined();
-    }
+    const scope = nock(testUrl).persist().get('/').reply(200, { field: 1 });
+    const res = await service.get();
+    expect(res.isFailure()).toBeTruthy();
   });
 
-  it('should return error when api responds with undefined', async () => {
-    // @ts-ignore
-    axios.get.mockResolvedValue(undefined);
-    service.getCatFacts().catch((error) => expect(error).toBeDefined());
-
-    try {
-      const res = await service.getCatFacts();
-    } catch (error) {
-      expect(error).toBeDefined();
-    }
-  });
-
-  it('should return error when api fails', async () => {
-    // @ts-ignore
-    axios.get.mockImplementation(() => {
-      throw new Error();
-    });
-    try {
-      const res = await service.getCatFacts();
-    } catch (error) {
-      expect(error).toBeDefined();
-    }
+  it('should return error when api fails with timeout', async () => {
+    const scope = nock(testUrl)
+      .persist()
+      .get('/')
+      .delay({ head: 10000, body: 10000 })
+      .reply(200, fact);
+    const res = await service.get();
+    expect(res.isFailure()).toBeTruthy();
   });
 });

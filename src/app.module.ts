@@ -5,6 +5,7 @@ import { Demo1Module } from './demo1/demo1.module';
 import { Demo2Module } from './demo2/demo2.module';
 import { loggerOptionsFactory } from './logger/logger';
 import { Demo3Module } from './demo3/demo3.module';
+import { Demo4Module } from './demo4/demo4.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { Demo3Module } from './demo3/demo3.module';
     Demo1Module,
     Demo2Module,
     Demo3Module,
+    Demo4Module,
   ],
 })
 export class AppModule {

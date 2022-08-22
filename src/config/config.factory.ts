@@ -16,6 +16,7 @@ export const configFactory: ConfigFactory<{ config: Configuration }> = () => {
           'CAT_FACTS_URL',
           'https://catfact.ninja/fact'
         ),
+        httpTimeout: envToNumberOrDefault('CAT_FACTS_HTTP_TIMEOUT', 5000),
       },
       afid: {
         enabled: false,
@@ -33,6 +34,7 @@ export interface LoggerConfig {
 
 export interface CatFactsConfig {
   url: string;
+  httpTimeout: number;
 }
 
 export interface AfidConfig {

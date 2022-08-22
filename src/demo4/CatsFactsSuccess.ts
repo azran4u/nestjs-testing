@@ -1,3 +1,3 @@
 export class CatsFactsSuccess {
-  constructor(private fact: string) {}
+  constructor(public facts: string[]) {}
 }
