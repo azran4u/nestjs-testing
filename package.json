@@ -76,6 +76,7 @@
     "dataloader": "^2.0.0",
     "graphql": "15.7.2",
     "graphql-fields-list": "^2.2.4",
+    "graphql-request": "^4.3.0",
     "graphql-subscriptions": "2.0.0",
     "joi": "^17.5.0",
     "joi-to-typescript": "^2.4.0",
