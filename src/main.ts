@@ -4,8 +4,16 @@ import { NestFactory } from '@nestjs/core';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { AppModule } from './app.module';
+import { start } from './auth';
 import { Configuration } from './config/config.factory';
 import { afid } from './utils/afid';
+
+
+
+start().then(
+  () => {},
+  (e) => console.log(e)
+);
 
 async function bootstrap() {
   let app: INestApplication;
@@ -27,4 +35,4 @@ async function bootstrap() {
     logger.error(`nest factory error ${error}`);
   }
 }
-bootstrap();
+// bootstrap();
